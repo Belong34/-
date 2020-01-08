@@ -4,8 +4,8 @@ import numpy as np
 
 fig = plt.figure()
 ax = fig.gca(projection='3d')
-p0 = np.array([2.311395, 0.999466, 6.831402])
-p1 = np.array([1.859702, 1.215584, 6.646396])
+p0 = np.array([1.1107524633407593,1.0999507904052734,5.605597496032715])
+p1 = np.array([0.8236871957778931,0.9067187905311584,5.173789978027344])
 k = (p1[0] - p0[0]) / (p1[2] - p0[2])
 cos = ((1 / (1 + k ** 2)) ** 0.5)
 sin = k * cos
@@ -14,7 +14,7 @@ print(sin ** 2 + cos ** 2)
 # p1 = np.array([18, -81, 600])
 # p0 = np.array([200, 200, 190])
 # p1 = np.array([20, 11, 19])
-t = 0.134114400
+t = 0.46729
 q0 = p1[0] - p0[0]
 q1 = p1[1] - p0[1]
 q2 = p1[2] - p0[2]
@@ -64,7 +64,7 @@ res = np.zeros((3, 150))
 # # res = np.dot(trans1,qqq)
 res = np.dot(trans1, zzz)
 for i in range(150):
-    if -0.53 > res[1][i]:
+    if -0.43 > res[1][i]:
         print(res[0][i], res[1][i], res[2][i], i)
         break
 print(res[0], res[1], res[2])
