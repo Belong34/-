@@ -7,8 +7,8 @@ import sys
 import math
 import threading
 
-import motion_tracking.positional_tracking.utils as ut
-import motion_tracking.positional_tracking.zed_model as zm
+import positional_tracking.utils as ut
+import positional_tracking.zed_model as zm
 import pyzed.sl as sl
 
 
