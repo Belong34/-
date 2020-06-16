@@ -1,6 +1,6 @@
 from scipy import optimize
 import matplotlib.pyplot as plt
-import mpy as np
+from history import mpy as np
 
 x = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], dtype=float)
 y = np.array([5, 7, 9, 11, 13, 15, 28.92, 42.81, 56.7, 70.59,

@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-import mpy as np
+from history import mpy as np
 
 fig = plt.figure()
 ax = fig.gca(projection='3d')

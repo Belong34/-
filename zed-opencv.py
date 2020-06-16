@@ -20,7 +20,7 @@ depth_format = sl.DEPTH_FORMAT.DEPTH_FORMAT_PNG
 from scipy import optimize
 
 
-def rotY(x, tran, x0, num):  # x=旋转角度，tran=平移量，x0为原矩阵值，num为xORyORz
+def rotY(x, tran, x0, num):  # 旋转平移矩阵,x=旋转角度，tran=平移量，x0为原矩阵值，num为xORyORz
     q = np.zeros(shape=[4, 1])
     src = np.zeros(shape=[4, 1])
     q[num] = tran
@@ -37,7 +37,7 @@ def rotY(x, tran, x0, num):  # x=旋转角度，tran=平移量，x0为原矩阵�
     return result[num][0]
 
 
-def piecewise_curve(x, x0, y0, k2, k1):
+def piecewise_curve(x, x0, y0, k2, k1):  # 曲线拟合
     # x<x0 ⇒ lambda x: k1*x + y0 - k1*x0
     # x>=x0 ⇒ lambda x: k2*x + y0 - k2*x0
     return np.piecewise(x, [x < x0, x >= x0], [lambda x: y0,
@@ -58,29 +58,25 @@ def piecewise_curve(x, x0, y0, k2, k1):
     #                                                                                    x1 - x0) + y0 + k2 * x1])
 
 
-def piecewise_linear(x, x0, y0, k1):
+def piecewise_linear(x, x0, y0, k1):   #  直线拟合
     return np.piecewise(x, [x < x0, x >= x0], [lambda x: y0,
                                                lambda x: k1 * x + y0 - k1 * x0])
 
 
-def findBiggestContours(image, contours):
+def findBiggestContours(image, contours):   #去除异常轮廓
     maxarea = 0
     maxx = None
     if contours is None:
         print("sorry")
     for i in contours:
         rect = cv2.minAreaRect(i)
-        # if 380 < rect[0][0] < 425 and 200 < rect[0][1] < 223:
-        # continue
-        if rect[0][0] < 250:
+        if rect[0][0] > 450:
             continue
         if cv2.contourArea(i) > maxarea:
             maxarea = cv2.contourArea(i)
             maxx = i
-
     if maxx is not None:
         rect = cv2.minAreaRect(maxx)
-
         print("middle is " + str(rect[0][0]), str(rect[0][1]))
         return rect[0]
     else:
@@ -102,9 +98,9 @@ def main():
     # init.coordinate_system = sl.COORDINATE_SYSTEM.COORDINATE_SYSTEM_RIGHT_HANDED_Y_UP  # Use a right-handed Y-up coordinate system
     init.depth_minimum_distance = 0.6
     zed.set_depth_max_range_value(7)
-    # if len(sys.argv) >= 2:
+    # if len(sys.argv) >= 2:                                                    # 使用相机
     # init.svo_input_filename = sys.argv[1]
-    init.svo_input_filename = "C:\\Users\\Administrator\\Documents\\ZED\\HD720_SN24807_16-20-14.svo"
+    init.svo_input_filename = "C:\\Users\\Administrator\\Documents\\ZED\\HD720_SN24807_16-33-54.svo"  # 文件导入
     key = 0
     # Open the camera
     err = zed.open(init)
@@ -148,13 +144,13 @@ def main():
         if err == sl.ERROR_CODE.SUCCESS:
             # Get the pose of the camera relative to the world frame
             state = zed.get_position(zed_pose, sl.REFERENCE_FRAME.REFERENCE_FRAME_WORLD)
-            # Display translation and timestamp
+            # 平移
             py_translation = sl.Translation()
             tx = round(zed_pose.get_translation(py_translation).get()[0], 3)
             ty = round(zed_pose.get_translation(py_translation).get()[1], 3)
             tz = round(zed_pose.get_translation(py_translation).get()[2], 3)
             print("Translation: tx: {0}, ty:  {1}, tz:  {2}, timestamp: {3}\n".format(tx, ty, tz, zed_pose.timestamp))
-            # Display orientation quaternion
+            # 旋转
             py_orientation = sl.Orientation()
             ox = round(zed_pose.get_orientation(py_orientation).get()[0], 3)
             oy = round(zed_pose.get_orientation(py_orientation).get()[1], 3)
@@ -162,7 +158,7 @@ def main():
             ow = round(zed_pose.get_orientation(py_orientation).get()[3], 3)
             print("Orientation: ox: {0}, oy:  {1}, oz: {2}, ow: {3}\n".format(ox, oy, oz, ow))
 
-            # Retrieve the left image, depth image in the half-resolution
+            # 读取图像
             zed.retrieve_image(image_zed, sl.VIEW.VIEW_LEFT, sl.MEM.MEM_CPU, int(new_width), int(new_height))
             zed.retrieve_image(depth_image_zed, sl.VIEW.VIEW_DEPTH, sl.MEM.MEM_CPU, int(new_width), int(new_height))
             # Retrieve the RGBA point cloud in half resolution
@@ -266,7 +262,7 @@ def main():
     ax3 = fig.add_subplot(223)
     ax4 = fig.add_subplot(224, projection='3d')
     xd = np.linspace(0, time1[len(time1) - 1] + 1, 1000)
-    p3, e3 = optimize.curve_fit(piecewise_linear, time1, zs, bounds=([0, -10, -10], [0.5, 10, 10]))
+    p3, e3 = optimize.curve_fit(piecewise_linear, time1, zs, bounds=([0, -10, -10], [5, 10, 10]))
     ax3.plot(time1, zs, "o")
     ax3.plot(xd, piecewise_linear(xd, *p3))
     p2, e2 = optimize.curve_fit(piecewise_linear, time1, xs, bounds=([p3[0] - 0.1, -10, -10], [p3[0] + 0.1, 10, 10]))
