@@ -1,6 +1,6 @@
-# Testing Project For Robocon2020
+# Testing Project About Football Trajectory Prediction Using ZED Camera
 ### 2020/6/16
-整理文件目录，增加开发者:达哥
+整理文件目录
 
 ### 2020/1/10
 
